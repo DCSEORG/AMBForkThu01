@@ -1,0 +1,147 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Dashboard";
+    if (Model.Error != null)
+    {
+        ViewData["Error"] = Model.Error;
+    }
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="display-5 fw-bold">
+            <i class="fas fa-tachometer-alt me-2"></i>Expense Dashboard
+        </h1>
+        <p class="lead text-muted">Welcome to the Expense Management System. Track, submit, and manage your expenses.</p>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mb-4">
+    <div class="col-md-4 mb-3">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <i class="fas fa-plus-circle fa-3x mb-3" style="color: #667eea;"></i>
+                <h5 class="card-title">Add Expense</h5>
+                <p class="card-text">Create a new expense claim with amount, date, and category.</p>
+                <a asp-page="/AddExpense" class="btn btn-primary">
+                    <i class="fas fa-plus me-1"></i>Add New
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <i class="fas fa-list-alt fa-3x mb-3" style="color: #667eea;"></i>
+                <h5 class="card-title">View Expenses</h5>
+                <p class="card-text">Browse and filter all your submitted expenses.</p>
+                <a asp-page="/Expenses" class="btn btn-primary">
+                    <i class="fas fa-eye me-1"></i>View All
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <i class="fas fa-check-double fa-3x mb-3" style="color: #667eea;"></i>
+                <h5 class="card-title">Approve Expenses</h5>
+                <p class="card-text">Review and approve pending expense claims.</p>
+                <a asp-page="/Approve" class="btn btn-primary">
+                    <i class="fas fa-clipboard-check me-1"></i>Review
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Summary Cards -->
+<div class="row mb-4">
+    @foreach (var summary in Model.ExpenseSummaries)
+    {
+        var iconClass = summary.StatusName switch
+        {
+            "Draft" => "fas fa-edit",
+            "Submitted" => "fas fa-paper-plane",
+            "Approved" => "fas fa-check-circle",
+            "Rejected" => "fas fa-times-circle",
+            _ => "fas fa-file"
+        };
+        var cardColor = summary.StatusName switch
+        {
+            "Draft" => "#a0aec0",
+            "Submitted" => "#4299e1",
+            "Approved" => "#48bb78",
+            "Rejected" => "#f56565",
+            _ => "#667eea"
+        };
+        <div class="col-md-3 mb-3">
+            <div class="card" style="border-left: 4px solid @cardColor;">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-1">@summary.StatusName</h6>
+                            <h3 class="mb-0">@summary.ExpenseCount</h3>
+                            <small class="text-muted">@summary.FormattedTotalAmount</small>
+                        </div>
+                        <i class="@iconClass fa-2x" style="color: @cardColor;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Recent Expenses -->
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span><i class="fas fa-clock me-2"></i>Recent Expenses</span>
+        <a asp-page="/Expenses" class="btn btn-sm btn-light">View All</a>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Category</th>
+                        <th>Description</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var expense in Model.RecentExpenses)
+                    {
+                        var badgeClass = expense.StatusName switch
+                        {
+                            "Draft" => "badge-draft",
+                            "Submitted" => "badge-submitted",
+                            "Approved" => "badge-approved",
+                            "Rejected" => "badge-rejected",
+                            _ => "badge-draft"
+                        };
+                        <tr>
+                            <td>@expense.FormattedDate</td>
+                            <td>@expense.CategoryName</td>
+                            <td>@(expense.Description ?? "-")</td>
+                            <td><strong>@expense.FormattedAmount</strong></td>
+                            <td><span class="badge-status @badgeClass">@expense.StatusName</span></td>
+                        </tr>
+                    }
+                    @if (!Model.RecentExpenses.Any())
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center text-muted py-4">
+                                <i class="fas fa-inbox fa-2x mb-2"></i>
+                                <p class="mb-0">No expenses yet. <a asp-page="/AddExpense">Add your first expense</a>.</p>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
