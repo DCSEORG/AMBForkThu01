@@ -433,7 +433,7 @@ BEGIN
     INNER JOIN dbo.ExpenseCategories c ON e.CategoryId = c.CategoryId
     INNER JOIN dbo.ExpenseStatus s ON e.StatusId = s.StatusId
     LEFT JOIN dbo.Users r ON e.ReviewedBy = r.UserId
-    WHERE (@SearchTerm IS NULL OR e.Description LIKE '%' + @SearchTerm + '%' OR c.CategoryName LIKE '%' + @SearchTerm + '%')
+    WHERE (@SearchTerm IS NULL OR e.Description LIKE CONCAT('%', @SearchTerm, '%') OR c.CategoryName LIKE CONCAT('%', @SearchTerm, '%'))
       AND (@CategoryId IS NULL OR e.CategoryId = @CategoryId)
       AND (@StatusId IS NULL OR e.StatusId = @StatusId)
       AND (@StartDate IS NULL OR e.ExpenseDate >= @StartDate)
