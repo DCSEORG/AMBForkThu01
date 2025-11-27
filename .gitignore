@@ -1,0 +1,30 @@
+# Build outputs
+bin/
+obj/
+publish/
+
+# IDE
+.vs/
+.vscode/
+*.user
+*.suo
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.bak
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Dependencies
+node_modules/
+
+# Deployment info (contains sensitive data)
+deployment-info.txt
+
+# Do NOT ignore app.zip - it's needed for deployment
+# !app.zip
