@@ -47,7 +47,7 @@ resource gpt4oDeployment 'Microsoft.CognitiveServices/accounts/deployments@2023-
     model: {
       format: 'OpenAI'
       name: 'gpt-4o'
-      version: '2024-05-13'
+      version: '2024-05-13' // Using stable version for POC - update as newer versions become available
     }
     raiPolicyName: 'Microsoft.Default'
   }
