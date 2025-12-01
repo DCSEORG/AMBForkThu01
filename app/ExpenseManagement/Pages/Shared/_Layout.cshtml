@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Expense Management</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/ExpenseManagement.styles.css" asp-append-version="true" />
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --secondary-color: #8b5cf6;
+            --success-color: #22c55e;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+        }
+        
+        body {
+            background-color: var(--bg-color);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            color: var(--text-primary);
+        }
+        
+        .navbar {
+            background-color: var(--card-bg) !important;
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+        }
+        
+        .navbar-brand {
+            font-weight: 600;
+            color: var(--primary-color) !important;
+        }
+        
+        .navbar-brand svg {
+            margin-right: 8px;
+        }
+        
+        .nav-link {
+            color: var(--text-secondary) !important;
+            font-weight: 500;
+            padding: 0.5rem 1rem !important;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            color: var(--text-primary) !important;
+            background-color: var(--bg-color);
+        }
+        
+        .card {
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+        }
+        
+        .card-header {
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            font-weight: 600;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            border-radius: 8px;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+        
+        .badge-status {
+            padding: 0.35em 0.75em;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .badge-draft {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+        
+        .badge-submitted {
+            background-color: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .badge-approved {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+        
+        .badge-rejected {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .stat-card {
+            padding: 1.25rem;
+            border-radius: 12px;
+            border: 1px dashed var(--border-color);
+        }
+        
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        .table th {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            border-bottom-width: 1px;
+        }
+        
+        .table td {
+            vertical-align: middle;
+            padding: 1rem 0.75rem;
+        }
+        
+        .error-banner {
+            background-color: #fee2e2;
+            border: 1px solid #fecaca;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            color: #991b1b;
+        }
+        
+        .error-banner code {
+            background-color: #fef2f2;
+            padding: 0.125rem 0.25rem;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    @if (ViewData["ErrorMessage"] != null)
+    {
+        <div class="error-banner container mt-3">
+            <strong>⚠️ Database Connection Issue:</strong> @ViewData["ErrorMessage"]
+            <br/><small>The app is currently displaying dummy data. Check your connection string and managed identity configuration.</small>
+        </div>
+    }
+    
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom mb-4">
+            <div class="container">
+                <a class="navbar-brand" asp-area="" asp-page="/Index">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="24" height="24" rx="6" fill="#6366f1"/>
+                        <path d="M8 12H16M12 8V16" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    Expense Management
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" 
+                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1 justify-content-end">
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-page="/Index">Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-page="/Expenses">Expenses</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-page="/NewExpense">New Expense</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-page="/Approvals">Approvals</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-page="/Chat">AI Chat</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/swagger" target="_blank">API Docs</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted mt-4">
+        <div class="container py-3">
+            &copy; 2025 - Expense Management System
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

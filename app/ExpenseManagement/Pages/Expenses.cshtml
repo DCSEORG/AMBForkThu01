@@ -1,0 +1,81 @@
+@page
+@model ExpensesModel
+@{
+    ViewData["Title"] = "Expenses";
+}
+
+<div class="card">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="mb-0">Expenses</h4>
+            <a asp-page="/NewExpense" class="btn btn-primary">+ New Expense</a>
+        </div>
+        
+        <form method="get" class="row g-3 mb-4">
+            <div class="col-md-4">
+                <input type="text" class="form-control" name="filter" value="@Model.Filter" placeholder="Search expenses...">
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" name="statusId">
+                    <option value="">All Statuses</option>
+                    @foreach (var status in Model.Statuses)
+                    {
+                        <option value="@status.StatusId" selected="@(Model.StatusId == status.StatusId)">@status.StatusName</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-secondary w-100">Filter</button>
+            </div>
+        </form>
+        
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Employee</th>
+                        <th>Category</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Description</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var expense in Model.Expenses)
+                    {
+                        <tr>
+                            <td>@expense.ExpenseDate.ToString("dd MMM yyyy")</td>
+                            <td>@expense.UserName</td>
+                            <td>@expense.CategoryName</td>
+                            <td>£@expense.Amount.ToString("N2")</td>
+                            <td>
+                                <span class="badge-status badge-@expense.StatusName?.ToLower()">
+                                    @expense.StatusName?.ToUpper()
+                                </span>
+                            </td>
+                            <td>@expense.Description</td>
+                            <td>
+                                @if (expense.StatusName == "Draft")
+                                {
+                                    <form method="post" asp-page-handler="Submit" class="d-inline">
+                                        <input type="hidden" name="expenseId" value="@expense.ExpenseId" />
+                                        <button type="submit" class="btn btn-sm btn-outline-primary">Submit</button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        
+        @if (!Model.Expenses.Any())
+        {
+            <div class="text-center py-4 text-muted">
+                No expenses found matching your criteria.
+            </div>
+        }
+    </div>
+</div>
